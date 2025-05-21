@@ -18,7 +18,7 @@ import { AddToCartButton } from "@/components/add-to-cart-button"
 export function MenuPage() {
   const [priceRange, setPriceRange] = useState([0, 50])
 
-  const categories = ["All", "Pizza", "Burgers","Swallow-Food", "Staple-Food", "Sandwiches", "Desserts", "Drinks"]
+  const categories = ["All", "Burgers", "Swallow-Food", "Staple-Food", "Sandwiches", "Desserts", "Drinks"]
 
   const menuItems = [
     {
@@ -86,7 +86,7 @@ export function MenuPage() {
       name: "Spicy Chicken Sandwich",
       description: "shreded chicken with spicy sauce",
       price: 700,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/sandw.jpeg?height=300&width=300",
       rating: 4.7,
       deliveryTime: "15-25 min",
       restaurant: "Favourite Hub",
@@ -96,7 +96,7 @@ export function MenuPage() {
     {
       id: 7,
       name: "Fresh Fruit Smoothie",
-      description: "Blend of seasonal fruits with yogurt",
+      description: "Blend of seasonal fruits",
       price: 1000,
       image: "/smothie.png?height=300&width=300",
       rating: 4.8,
@@ -109,8 +109,8 @@ export function MenuPage() {
       id: 8,
       name: "Burger",
       description: "chicken, ketchup, BBQ sauce",
-      price: 2500,
-      image: "/placeholder.svg?height=300&width=300",
+      price: 3000,
+      image: "/burger.jpeg?height=300&width=300",
       rating: 4.9,
       deliveryTime: "20-30 min",
       restaurant: "Burger Joint",
@@ -118,7 +118,7 @@ export function MenuPage() {
       category: "Burgers",
     },
     {
-      id: 8,
+      id: 9,
       name: "Moi-Moi",
       description: "Moi, Egg, Fish",
       price: 2500,

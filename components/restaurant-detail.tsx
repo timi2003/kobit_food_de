@@ -26,15 +26,15 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       .join(" "),
     rating: 4.8,
     reviewCount: 243,
-    deliveryTime: "20-35 min",
-    deliveryFee: "$2.99",
+    deliveryTime: "20-30 min",
+    deliveryFee: "N1500",
     minOrder: "N5000.00",
-    address: "Magbon Bustop, opposite..... along badagry-expressway",
+    address: "Ijanikin Lagos",
     phone: "09019371301",
     website: "",
     description:
       "Serving delicious food made with fresh ingredients. Our menu offers a variety of options to satisfy any craving.",
-    image: "/placeholder.svg?height=400&width=800",
+    image: "/family-meal.jpeg?height=400&width=800",
     categories: ["Pizza", "Burgers", "staple-food", "Desserts", "Drinks"],
   }
 
@@ -50,7 +50,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       deliveryTime: "15-25 min",
       restaurant: "Winnyz",
       tags: ["Bestseller"],
-      category: "Staple-Foods",
+      category: "staple-Food",
     },
     {
       id: 2,
@@ -62,7 +62,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       deliveryTime: "15-20 min",
       restaurant: "Winnyz",
       tags: ["Healthy"],
-      category: "Staple-Foods",
+      category: "staple-Food",
     },
     {
       id: 3,
@@ -74,7 +74,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       deliveryTime: "25-35 min",
       restaurant: "Iya-Oge Buka",
       tags: ["Popular"],
-      category: "Staple-Food",
+      category: "staple-Food",
     },
     {
       id: 4,
@@ -93,7 +93,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       name: "Spicy Chicken Sandwich",
       description: "shreded chicken with spicy sauce",
       price: 700,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/sandw.jpeg?height=300&width=300",
       rating: 4.7,
       deliveryTime: "15-25 min",
       restaurant: "Favourite Hub",
@@ -103,7 +103,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
     {
       id: 6,
       name: "Fresh Fruit Smoothie",
-      description: "Blend of seasonal fruits with yogurt",
+      description: "Blend of seasonal fruits",
       price: 1000,
       image: "/smothie.png?height=300&width=300",
       rating: 4.8,
@@ -117,7 +117,7 @@ export function RestaurantDetail({ slug }: RestaurantDetailProps) {
       name: "Burger",
       description: "chicken, ketchup, BBQ sauce",
       price: 2500,
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/burger.jpeg?height=300&width=300",
       rating: 4.9,
       deliveryTime: "20-30 min",
       restaurant: "Burger Joint",

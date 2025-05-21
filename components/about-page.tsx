@@ -19,16 +19,16 @@ export function AboutPage() {
       bio: "Samuel oversees all operations and ensures smooth delivery experiences.",
     },
     {
-      name: "Michael Chen",
+      name: "Lawal Emmanuel",
       role: "Chief Technology Officer",
       image: "/placeholder.svg?height=300&width=300",
-      bio: "Michael leads our tech team and is responsible for our cutting-edge platform.",
+      bio: "Emmanuel leads our tech team and is responsible for our cutting-edge platform.",
     },
     {
       name: "Akinlua Kemi",
       role: "Head of Partnerships",
       image: "/kemi.jpg?height=300&width=300",
-      bio: "Amara works with restaurants to bring the best food options to our customers.",
+      bio: "Kemi works with restaurants to bring the best food options to our customers.",
     },
   ]
 

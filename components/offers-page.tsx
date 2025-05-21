@@ -101,7 +101,7 @@ export function OffersPage() {
       restaurant: "Burger Joint",
       title: "Burger Combo Special",
       description: "Any burger, fries, and drink for N4500",
-      image: "/placeholder.svg?height=150&width=300",
+      image: "/bugcomb.jpeg?height=150&width=300",
       expiryDate: "May 31, 2025",
     },
     {
@@ -109,7 +109,7 @@ export function OffersPage() {
       restaurant: "Winnyz",
       title: "Buffet",
       description: "Buffet for as low as N40000",
-      image: "/placeholder.svg?height=150&width=300",
+      image: "/buffet.jpeg?height=150&width=300",
       expiryDate: "June 15, 2025",
     },
     {
@@ -117,7 +117,7 @@ export function OffersPage() {
       restaurant: "Iya-Oge Buka",
       title: "Family Meal",
       description: "Get 15% discount",
-      image: "/placeholder.svg?height=150&width=300",
+      image: "/family-meal.jpeg?height=150&width=300",
       expiryDate: "Ongoing",
     },
   ]
