@@ -72,7 +72,7 @@ export function CartPage() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium">N{(item.price * item.quantity).toFixed(2)}</span>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -110,7 +110,7 @@ export function CartPage() {
                         30-45 minutes
                       </div>
                     </Label>
-                    <span className="font-medium">${deliveryOption === "standard" ? "2.99" : "5.99"}</span>
+                    <span className="font-medium">N{deliveryOption === "standard" ? "2.99" : "5.99"}</span>
                   </div>
                   <div className="flex items-center space-x-2 border rounded-lg p-4">
                     <RadioGroupItem value="express" id="express" />
@@ -121,7 +121,7 @@ export function CartPage() {
                         15-25 minutes
                       </div>
                     </Label>
-                    <span className="font-medium">${deliveryOption === "express" ? "5.99" : "2.99"}</span>
+                    <span className="font-medium">N{deliveryOption === "express" ? "5.99" : "2.99"}</span>
                   </div>
                 </RadioGroup>
               </CardContent>
@@ -137,21 +137,21 @@ export function CartPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>N{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Delivery Fee</span>
-                    <span>${deliveryFee.toFixed(2)}</span>
+                    <span>N{deliveryFee.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Service Fee</span>
-                    <span>${serviceFee.toFixed(2)}</span>
+                    <span>N{serviceFee.toFixed(2)}</span>
                   </div>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-medium text-lg">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>N{total.toFixed(2)}</span>
                 </div>
 
                 <div className="pt-4">
