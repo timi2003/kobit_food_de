@@ -18,120 +18,80 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { useAppStore } from "@/lib/store"
 
 export function AdminDashboard() {
+  const { state } = useAppStore()
   const [activeTab, setActiveTab] = useState("overview")
 
   const stats = [
     {
       title: "Total Revenue",
-      value: "$12,628",
+      value: `₦${state.stats.totalRevenue.toLocaleString()}`,
       change: "+12.5%",
       trend: "up",
       icon: <DollarSign className="h-5 w-5" />,
     },
     {
       title: "Total Orders",
-      value: "1,429",
+      value: state.stats.totalOrders.toString(),
       change: "+8.2%",
       trend: "up",
       icon: <ShoppingBag className="h-5 w-5" />,
     },
     {
       title: "New Customers",
-      value: "342",
+      value: state.stats.newCustomers.toString(),
       change: "+32.1%",
       trend: "up",
       icon: <Users className="h-5 w-5" />,
     },
     {
       title: "Avg. Order Value",
-      value: "$28.50",
+      value: `₦${state.stats.avgOrderValue.toLocaleString()}`,
       change: "-4.3%",
       trend: "down",
       icon: <BarChart3 className="h-5 w-5" />,
     },
   ]
 
-  const recentOrders = [
-    {
-      id: "#3210",
-      customer: "Sophia Anderson",
-      items: 3,
-      total: "$42.50",
-      status: "Delivered",
-      time: "10 min ago",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: "#3209",
-      customer: "James Wilson",
-      items: 2,
-      total: "$28.99",
-      status: "Preparing",
-      time: "25 min ago",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: "#3208",
-      customer: "Emma Thompson",
-      items: 4,
-      total: "$56.20",
-      status: "In Transit",
-      time: "45 min ago",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: "#3207",
-      customer: "Michael Brown",
-      items: 1,
-      total: "$12.99",
-      status: "Delivered",
-      time: "1 hour ago",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: "#3206",
-      customer: "Olivia Davis",
-      items: 5,
-      total: "$78.45",
-      status: "Delivered",
-      time: "2 hours ago",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-  ]
+  const recentOrders = state.orders.slice(0, 5).map((order) => ({
+    id: order.id,
+    customer: order.customer.name,
+    email: order.customer.email,
+    phone: order.customer.phone,
+    items: order.items.length,
+    total: `₦${order.total.toLocaleString()}`,
+    paymentMethod: "Bank Transfer",
+    transferRef: order.transferReference || "Pending",
+    status:
+      order.status === "payment_confirmed"
+        ? "Payment Confirmed"
+        : order.status === "preparing"
+          ? "Preparing"
+          : order.status === "pending_payment"
+            ? "Pending Payment"
+            : order.status,
+    time: new Date(order.createdAt).toLocaleString(),
+    avatar: order.customer.avatar || "/placeholder.svg?height=32&width=32",
+    orderDetails: order.items.map((item) => `${item.quantity}x ${item.name}`).join(", "),
+  }))
 
-  const topItems = [
-    {
-      name: "Margherita Pizza",
-      sold: 342,
-      revenue: "$4,445.80",
-      growth: 12.5,
-    },
-    {
-      name: "Double Cheeseburger",
-      sold: 276,
-      revenue: "$2,757.24",
-      growth: 8.3,
-    },
-    {
-      name: "Chicken Caesar Salad",
-      sold: 189,
-      revenue: "$1,699.11",
-      growth: 5.7,
-    },
-    {
-      name: "Chocolate Lava Cake",
-      sold: 156,
-      revenue: "$1,091.44",
-      growth: 15.2,
-    },
-  ]
+  // Use the deterministic sales data from the store instead of Math.random()
+  const topItems = state.menuItems.map((item) => ({
+    name: item.name,
+    sold: item.sold,
+    revenue: `₦{item.revenue.toLocaleString()}`,
+    growth: item.growth,
+  }))
 
   return (
-    <div className="flex-1 space-y-6 p-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Dashboard Overview</h2>
+          <p className="text-muted-foreground">Monitor your restaurant's performance</p>
+        </div>
         <div className="flex items-center gap-2">
           <Tabs defaultValue="today" className="w-[300px]">
             <TabsList className="grid w-full grid-cols-4">
@@ -182,42 +142,61 @@ export function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Avatar>
-                      <AvatarImage src={order.avatar || "/placeholder.svg"} alt={order.customer} />
-                      <AvatarFallback>{order.customer.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{order.customer}</p>
-                        <p className="text-sm text-muted-foreground">{order.id}</p>
+                <div key={order.id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <Avatar>
+                        <AvatarImage src={order.avatar || "/placeholder.svg"} alt={order.customer} />
+                        <AvatarFallback>{order.customer.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{order.customer}</p>
+                          <p className="text-sm text-muted-foreground">{order.id}</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          <span>{order.time}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>{order.time}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="font-medium">{order.total}</p>
+                        <p className="text-sm text-muted-foreground">{order.items} items</p>
                       </div>
+                      <Badge
+                        variant={
+                          order.status === "Payment Confirmed"
+                            ? "default"
+                            : order.status === "Pending Payment"
+                              ? "destructive"
+                              : "secondary"
+                        }
+                      >
+                        {order.status}
+                      </Badge>
+                      <Button variant="ghost" size="icon">
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="font-medium">{order.total}</p>
-                      <p className="text-sm text-muted-foreground">{order.items} items</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Contact</p>
+                      <p>{order.email}</p>
+                      <p>{order.phone}</p>
                     </div>
-                    <Badge
-                      variant={
-                        order.status === "Delivered"
-                          ? "default"
-                          : order.status === "Preparing"
-                            ? "outline"
-                            : "secondary"
-                      }
-                    >
-                      {order.status}
-                    </Badge>
-                    <Button variant="ghost" size="icon">
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <div>
+                      <p className="text-muted-foreground">Payment</p>
+                      <p>{order.paymentMethod}</p>
+                      <p className="font-mono text-xs">{order.transferRef}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Order Items</p>
+                      <p>{order.orderDetails}</p>
+                    </div>
                   </div>
                 </div>
               ))}
