@@ -2,16 +2,16 @@
 
 import type React from "react"
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock, User, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
+import { apiClient } from "@/lib/api-client"
 import { toast } from "@/hooks/use-toast"
 
 export function SignupForm() {
@@ -23,7 +23,6 @@ export function SignupForm() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
-
   const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => {
@@ -44,17 +43,48 @@ export function SignupForm() {
 
     setIsLoading(true)
 
-    // In a real app, you would make an API call to register the user
-    // For now, we'll simulate a successful registration after a short delay
-    setTimeout(() => {
+    try {
+      const response = await apiClient.register({
+        firstName,
+        lastName,
+        email,
+        password,
+        phoneNumber,
+      })
+
+      if (response.success) {
+        // Store auth tokens using the API client methods
+        if (response.data.tokens.accessToken) {
+          apiClient.setToken(response.data.tokens.accessToken)
+        }
+
+        // Store refresh token separately
+        if (response.data.tokens.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
+        }
+
+        // Store user data
+        localStorage.setItem("user", JSON.stringify(response.data.user))
+
+        toast({
+          title: "Account created",
+          description: "Welcome to KOBIT! Your account has been created successfully.",
+        })
+
+        router.push("/")
+      } else {
+        throw new Error(response.message || "Registration failed")
+      }
+    } catch (error) {
+      console.error("Registration failed:", error)
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Failed to create account. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
       setIsLoading(false)
-      // Store user data in localStorage
-      localStorage.setItem("kobit-user", JSON.stringify({ firstName, lastName, email }))
-      // Redirect to home page
-      router.push("/")
-      // Refresh the page to update the UI
-      window.location.reload()
-    }, 1500)
+    }
   }
 
   return (
@@ -144,7 +174,7 @@ export function SignupForm() {
               <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Password must be at least 8 characters long</p>
+          <p className="text-xs text-muted-foreground mt-1">Password must be at least 6 characters long</p>
         </div>
       </div>
       <div className="flex items-start space-x-2">

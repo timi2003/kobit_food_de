@@ -42,8 +42,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await apiClient.request("/auth/profile")
-      setUser(response.user)
+      // Use the apiClient.getProfile() method instead of direct request
+      const response = await apiClient.getProfile()
+      setUser(response.data.user)
     } catch (error) {
       console.error("Failed to fetch user profile:", error)
       logout()
@@ -56,10 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await apiClient.login({ email, password })
 
-      apiClient.setToken(response.tokens.accessToken)
-      localStorage.setItem("refreshToken", response.tokens.refreshToken)
-
-      setUser(response.user)
+      if (response.success && response.data) {
+        apiClient.setToken(response.data.tokens.accessToken)
+        localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
+        setUser(response.data.user)
+      } else {
+        throw new Error(response.message || "Login failed")
+      }
     } catch (error) {
       throw error
     }
@@ -69,10 +73,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await apiClient.register(userData)
 
-      apiClient.setToken(response.tokens.accessToken)
-      localStorage.setItem("refreshToken", response.tokens.refreshToken)
-
-      setUser(response.user)
+      if (response.success && response.data) {
+        apiClient.setToken(response.data.tokens.accessToken)
+        localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
+        setUser(response.data.user)
+      } else {
+        throw new Error(response.message || "Registration failed")
+      }
     } catch (error) {
       throw error
     }

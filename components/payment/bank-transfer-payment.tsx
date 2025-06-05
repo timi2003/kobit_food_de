@@ -31,9 +31,9 @@ export function BankTransferPayment({
   // Bank account details
   const bankAccounts = [
     {
-      bank: "GTBank",
-      accountNumber: "0123456789",
-      accountName: "KOBIT Food Delivery Ltd",
+      bank: "Opay",
+      accountNumber: "8139523649",
+      accountName: "KOBIT Food Delivery Service",
     },
     {
       bank: "First Bank",

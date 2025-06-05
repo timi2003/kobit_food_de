@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
+import { apiClient } from "@/lib/api-client"
+import { toast } from "@/hooks/use-toast"
 
 export function LoginForm() {
   const router = useRouter()
@@ -23,38 +25,49 @@ export function LoginForm() {
     setShowPassword(!showPassword)
   }
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setIsLoading(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
 
-  //   // In a real app, you would make an API call to authenticate the user
-  //   // For now, we'll simulate a successful login after a short delay
-  //   setTimeout(() => {
-  //     setIsLoading(false)
-  //     // Store login state in localStorage
-  //     localStorage.setItem("kobit-user", JSON.stringify({ email }))
-  //     // Redirect to home page
-  //     router.push("/")
-  //     // Refresh the page to update the UI
-  //     window.location.reload()
-  //   }, 1500)
-  // }
-  const handleSubmit = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await apiClient.login({ email, password })
 
-      const data = await res.json();
-      console.log('Login successful:', data);
-    } catch (err) {
-      console.error('Login failed:', err);
+      if (response.success) {
+        // Store auth tokens using the API client methods
+        if (response.data.tokens.accessToken) {
+          apiClient.setToken(response.data.tokens.accessToken)
+        }
+
+        // Store refresh token separately
+        if (response.data.tokens.refreshToken) {
+          localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
+        }
+
+        // Store user data
+        localStorage.setItem("user", JSON.stringify(response.data.user))
+
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        })
+
+        // Redirect to home or intended page
+        const redirectUrl = new URLSearchParams(window.location.search).get("redirect") || "/"
+        router.push(redirectUrl)
+      } else {
+        throw new Error(response.message || "Login failed")
+      }
+    } catch (error) {
+      console.error("Login failed:", error)
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Invalid email or password",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
