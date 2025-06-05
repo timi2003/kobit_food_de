@@ -43,7 +43,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Fast Delivery</h3>
                 <p className="text-muted-foreground">
-                  Our delivery partners ensure your food arrives hot and fresh in 30 minutes or less.
+                  Our delivery partners ensure your food arrives in 20 minutes or less.
                 </p>
               </div>
               <div className="flex flex-col items-center text-center p-6 rounded-lg border bg-card">
@@ -52,7 +52,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Quality Restaurants</h3>
                 <p className="text-muted-foreground">
-                  We partner with the best local restaurants to bring you a wide variety of cuisines.
+                  We partner with the all your favourite food vendor in Lasued and environs.
                 </p>
               </div>
               <div className="flex flex-col items-center text-center p-6 rounded-lg border bg-card">
@@ -61,7 +61,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Easy Ordering</h3>
                 <p className="text-muted-foreground">
-                  Our intuitive app makes ordering your favorite meals quick and hassle-free.
+                  Ordering your favorite meals is made easy and hassle-free.
                 </p>
               </div>
             </div>
@@ -73,7 +73,7 @@ export default function Home() {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold tracking-tight mb-4">Ready to Order?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-              Thousands of delicious options are just a few clicks away. Start your culinary journey with KOBIT today.
+              Your delicious food options are just a few clicks away. Start your culinary journey with KOBIT today.
             </p>
             <Button asChild size="lg" className="rounded-full px-8">
               <Link href="/menu">Browse Menu</Link>

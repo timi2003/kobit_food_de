@@ -5,29 +5,25 @@ import { Description } from "@radix-ui/react-toast"
 export function FoodCategories() {
   const categories = [
     {
-      name: "Pizza",
-      Description: "Pepperoni, cheese, mushroom",
-      icon: <Pizza className="h-8 w-8" />,
-      href: "/menu/pizza",
-    },
-    {
       name: "Burgers",
+      Description: "Not available now",
       icon: <Beef className="h-8 w-8" />,
       href: "/menu/burgers",
     },
     {
-      name: "Salads",
+      name: "Rice dish",
       icon: <Salad className="h-8 w-8" />,
       href: "/menu/salads",
     },
     {
-      name: "Sandwiches",
-      icon: <Sandwich className="h-8 w-8" />,
+      name: "Beans dish",
+      Description: "beans, bread, garri",
+      icon: <Salad className="h-8 w-8" />,
       href: "/menu/sandwiches",
     },
     {
       name: "Desserts",
-      Description: "Vanilla, Chocolate",
+      Description: "Not available now",
       icon: <IceCream className="h-8 w-8" />,
       href: "/menu/desserts",
     },
@@ -39,18 +35,18 @@ export function FoodCategories() {
     },
     {
       name: "Swallow-Food",
-       Description: "Amala, Fufu, Pounded-Yam, Eba,",
-      // icon: <Coffee className="h-8 w-8" />,
+       Description: "Amala, Fufu, Pounded-Yam, Eba",
+      icon: <Salad className="h-8 w-8" />,
       href: "/menu/swallow",
     },
     {
-      name: "Staple-Food",
-      Description: "Rice of all sort, Beans, Stir-Fry",
-      // icon: <Coffee className="h-8 w-8" />,
+      name: "Stir Fry",
+      Description: "Stir-Fry",
+      icon: <Salad className="h-8 w-8" />,
       href: "/menu/Staple-Food",
     },
     {
-      name: "Confectionaries",
+      name: "Pasteries",
       Description: "Puff, Jam-Dough, Eggroll, Pie",
       // icon: <Coffee className="h-8 w-8" />,
       href: "/menu/Confectionaries",

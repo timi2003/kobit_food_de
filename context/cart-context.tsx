@@ -9,6 +9,8 @@ export interface CartItem {
   quantity: number
   image: string
   restaurant: string
+  restaurantId?: string
+  customizations?: Record<string, any>
 }
 
 interface CartContextType {
@@ -19,6 +21,7 @@ interface CartContextType {
   clearCart: () => void
   itemCount: number
   subtotal: number
+  getTotalPrice: () => number
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -79,6 +82,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
+  const getTotalPrice = () => {
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -89,6 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         itemCount,
         subtotal,
+        getTotalPrice,
       }}
     >
       {children}

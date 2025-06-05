@@ -5,17 +5,17 @@ export function HowItWorks() {
     {
       icon: <Search className="h-10 w-10" />,
       title: "Browse & Select",
-      description: "Choose from thousands of restaurants and dishes",
+      description: "Choose and customize your favourite restaurants and dishes",
     },
     {
       icon: <UtensilsCrossed className="h-10 w-10" />,
       title: "Order & Pay",
-      description: "Securely place your order with just a few clicks",
+      description: "place your order with just a few clicks",
     },
     {
       icon: <Truck className="h-10 w-10" />,
-      title: "Track & Enjoy",
-      description: "Follow your delivery in real-time and enjoy your meal",
+      title: "Get your meal & Enjoy",
+      description: "Get your delivery and enjoy your meal",
     },
   ]
 

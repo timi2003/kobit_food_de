@@ -16,13 +16,14 @@ export function CartPage() {
   const { items, updateQuantity, removeItem, subtotal } = useCart()
   const [deliveryOption, setDeliveryOption] = useState("standard")
 
-  const deliveryFee = deliveryOption === "express" ? 5.99 : 2.99
-  const serviceFee = 1.99
+  const deliveryFee = deliveryOption === "express" ? 1500 : 500
+  const serviceFee = 300
   const total = subtotal + deliveryFee + serviceFee
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Your Cart</h1>
+      <h2 className="text-3xl font-bold tracking-tight mb-8">Note: Delivery Time range from 9:00am - 5:00pm</h2>
 
       {items.length === 0 ? (
         <div className="text-center py-12">
@@ -72,7 +73,7 @@ export function CartPage() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <span className="font-medium">N{(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium">₦{(item.price * item.quantity).toLocaleString()}</span>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -104,24 +105,13 @@ export function CartPage() {
                   <div className="flex items-center space-x-2 border rounded-lg p-4">
                     <RadioGroupItem value="standard" id="standard" />
                     <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Standard Delivery</div>
+                      <div className="font-medium">Delivery</div>
                       <div className="text-sm text-muted-foreground flex items-center mt-1">
                         <Clock className="h-4 w-4 mr-1" />
-                        30-45 minutes
+                        10-15 minutes
                       </div>
                     </Label>
-                    <span className="font-medium">N{deliveryOption === "standard" ? "2.99" : "5.99"}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 border rounded-lg p-4">
-                    <RadioGroupItem value="express" id="express" />
-                    <Label htmlFor="express" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Express Delivery</div>
-                      <div className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Clock className="h-4 w-4 mr-1" />
-                        15-25 minutes
-                      </div>
-                    </Label>
-                    <span className="font-medium">N{deliveryOption === "express" ? "5.99" : "2.99"}</span>
+                    <span className="font-medium">₦{deliveryOption === "standard" ? "500" : "1500"}</span>
                   </div>
                 </RadioGroup>
               </CardContent>
@@ -137,30 +127,26 @@ export function CartPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>N{subtotal.toFixed(2)}</span>
+                    <span>₦{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Delivery Fee</span>
-                    <span>N{deliveryFee.toFixed(2)}</span>
+                    <span>₦{deliveryFee.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Service Fee</span>
-                    <span>N{serviceFee.toFixed(2)}</span>
+                    <span>₦{serviceFee.toLocaleString()}</span>
                   </div>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-medium text-lg">
                   <span>Total</span>
-                  <span>N{total.toFixed(2)}</span>
+                  <span>₦{total.toLocaleString()}</span>
                 </div>
 
                 <div className="pt-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">Promo Code</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input placeholder="Enter code" className="flex-1" />
-                    <Button variant="outline">Apply</Button>
+                    
                   </div>
                 </div>
               </CardContent>

@@ -1,271 +1,415 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-import { PaymentMethodSelector } from "@/components/payment/payment-method-selector"
-import { toast } from "@/hooks/use-toast"
-import { MapPin, Clock, CreditCard, ChevronRight, ChevronLeft } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
+import { MapPin, CreditCard, Clock } from "lucide-react"
 import { useCart } from "@/context/cart-context"
+import { useAuth } from "@/context/auth-context"
+import { apiClient } from "@/lib/api-client"
+import { useRouter } from "next/navigation"
+import { BankTransferPayment } from "@/components/payment/bank-transfer-payment"
+import { toast } from "@/hooks/use-toast"
+
+interface DeliveryAddress {
+  name: string
+  street: string
+  city: string
+  state: string
+  zipCode: string
+  instructions?: string
+}
+
+interface OrderDetails {
+  _id: string
+  orderNumber: string
+  pricing: {
+    total: number
+    subtotal: number
+    deliveryFee: number
+    serviceFee: number
+    tax: number
+  }
+  status: string
+}
 
 export function CheckoutPage() {
+  const { items, getTotalPrice, clearCart } = useCart()
+  const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const { items, subtotal, clearCart } = useCart()
-  const [step, setStep] = useState(1)
-  const [paymentComplete, setPaymentComplete] = useState(false)
 
-  // Delivery details
-  const [address, setAddress] = useState("")
-  const [deliveryOption, setDeliveryOption] = useState("standard")
-  const [deliveryInstructions, setDeliveryInstructions] = useState("")
+  const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
+    name: user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    instructions: "",
+  })
 
-  const deliveryFee = deliveryOption === "express" ? 5.99 : 2.99
-  const serviceFee = 1.99
-  const total = subtotal + deliveryFee + serviceFee
+  const [specialInstructions, setSpecialInstructions] = useState("")
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [orderCreated, setOrderCreated] = useState(false)
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
 
-  // Convert to Naira for Nigerian payment methods (example conversion rate)
-  const exchangeRate = 1500 // Example: 1 USD = 1500 Naira
-  const totalInNaira = Math.round(total * exchangeRate)
+  if (!isAuthenticated) {
+    router.push("/login?redirect=/checkout")
+    return null
+  }
 
-  const handleNextStep = () => {
-    if (step === 1 && !address) {
+  if (items.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
+          <p className="text-gray-600 mb-6">Add some delicious items to your cart first!</p>
+          <Button onClick={() => router.push("/restaurants")}>Browse Restaurants</Button>
+        </div>
+      </div>
+    )
+  }
+
+  const subtotal = getTotalPrice()
+  const deliveryFee = 500 // ₦500 base delivery fee
+  const serviceFee = Math.round(subtotal * 0.05) // 5% service fee
+  const tax = Math.round(subtotal * 0.075) // 7.5% VAT
+  const total = subtotal + deliveryFee + serviceFee + tax
+
+  const handleCreateOrder = async () => {
+    try {
+      setIsProcessing(true)
+
+      // Validate address
+      if (!deliveryAddress.name || !deliveryAddress.street || !deliveryAddress.city || !deliveryAddress.state) {
+        toast({
+          title: "Missing information",
+          description: "Please fill in all delivery address fields",
+          variant: "destructive",
+        })
+        setIsProcessing(false)
+        return
+      }
+
+      // Get restaurant ID from first item (use a default if not available)
+      const restaurantId = items[0]?.restaurantId || "default-restaurant-id"
+
+      const orderData = {
+        restaurantId,
+        items: items.map((item) => ({
+          menuItemId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          customizations: item.customizations || {},
+        })),
+        deliveryAddress: {
+          ...deliveryAddress,
+          coordinates: {
+            latitude: 6.5244, // Default Lagos coordinates
+            longitude: 3.3792,
+          },
+        },
+        paymentMethod: "bank_transfer",
+        specialInstructions,
+        pricing: {
+          subtotal,
+          deliveryFee,
+          serviceFee,
+          tax,
+          total,
+        },
+        customer: {
+          id: user?.id,
+          email: user?.email,
+          name: `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
+        },
+      }
+
+      const response = await apiClient.createOrder(orderData)
+
+      if (response.success && response.data) {
+        setOrderDetails(response.data.order)
+        setOrderCreated(true)
+
+        toast({
+          title: "Order created",
+          description: `Your order #${response.data.order.orderNumber} has been created successfully!`,
+        })
+      } else {
+        throw new Error(response.error || "Failed to create order")
+      }
+    } catch (error) {
+      console.error("Order creation failed:", error)
       toast({
-        title: "Missing information",
-        description: "Please enter your delivery address",
+        title: "Order failed",
+        description: error instanceof Error ? error.message : "Failed to create your order. Please try again.",
         variant: "destructive",
       })
-      return
+    } finally {
+      setIsProcessing(false)
     }
-
-    setStep(step + 1)
   }
 
-  const handlePreviousStep = () => {
-    setStep(step - 1)
+  const handlePaymentSuccess = async (reference: string) => {
+    try {
+      if (!orderDetails) {
+        throw new Error("No order details available")
+      }
+
+      // Update order with payment reference
+      await apiClient.updateOrderPayment({
+        orderId: orderDetails._id,
+        paymentReference: reference,
+        status: "payment_pending",
+      })
+
+      toast({
+        title: "Payment initiated",
+        description: "Your payment has been initiated. We'll process your order once payment is confirmed.",
+      })
+
+      // Clear cart after successful payment initiation
+      clearCart()
+
+      // Redirect to order confirmation
+      router.push(`/order-confirmation?orderId=${orderDetails._id}`)
+    } catch (error) {
+      console.error("Payment update failed:", error)
+      toast({
+        title: "Payment update failed",
+        description: "Failed to update payment information. Please contact support.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handlePaymentSuccess = (reference: string, method: string) => {
-    setPaymentComplete(true)
+  if (orderCreated && orderDetails) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-center text-green-600">Order Created Successfully!</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center mb-6">
+                <p className="text-lg font-semibold">Order #{orderDetails.orderNumber}</p>
+                <p className="text-gray-600">Total: ₦{orderDetails.pricing.total.toLocaleString()}</p>
+              </div>
 
-    // In a real app, you would submit the order to your backend here
-    setTimeout(() => {
-      clearCart() // Clear the cart after successful payment
-      router.push("/order-confirmation")
-    }, 2000)
-  }
-
-  const handlePaymentCancel = () => {
-    toast({
-      title: "Payment cancelled",
-      description: "Your payment has been cancelled",
-    })
+              <BankTransferPayment
+                orderNumber={orderDetails.orderNumber}
+                amount={orderDetails.pricing.total}
+                customerEmail={user?.email || ""}
+                onPaymentSuccess={handlePaymentSuccess}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold tracking-tight mb-8">Checkout</h1>
+      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center">
-            <div
-              className={`rounded-full h-10 w-10 flex items-center justify-center ${
-                step >= 1 ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              1
-            </div>
-            <div className={`h-1 w-16 ${step >= 2 ? "bg-primary" : "bg-muted"}`}></div>
-            <div
-              className={`rounded-full h-10 w-10 flex items-center justify-center ${
-                step >= 2 ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              2
-            </div>
-            <div className={`h-1 w-16 ${step >= 3 ? "bg-primary" : "bg-muted"}`}></div>
-            <div
-              className={`rounded-full h-10 w-10 flex items-center justify-center ${
-                step >= 3 ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              3
-            </div>
-          </div>
-          <div className="text-sm text-muted-foreground">Step {step} of 3</div>
-        </div>
-
-        {step === 1 && (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column - Forms */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Delivery Address */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Delivery Details
+              <CardTitle className="flex items-center">
+                <MapPin className="h-5 w-5 mr-2" />
+                Delivery Address
               </CardTitle>
-              <CardDescription>Where should we deliver your order?</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="address">Delivery Address</Label>
-                <Textarea
-                  id="address"
-                  placeholder="Enter your full address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="min-h-[100px]"
-                  required
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={deliveryAddress.name}
+                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter your full name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="zipCode">Zip Code</Label>
+                  <Input
+                    id="zipCode"
+                    value={deliveryAddress.zipCode}
+                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, zipCode: e.target.value }))}
+                    placeholder="Enter zip code"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="street">Street Address</Label>
+                <Input
+                  id="street"
+                  value={deliveryAddress.street}
+                  onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, street: e.target.value }))}
+                  placeholder="Enter your street address"
                 />
               </div>
 
-              <div className="space-y-4">
-                <Label>Delivery Options</Label>
-                <RadioGroup value={deliveryOption} onValueChange={setDeliveryOption}>
-                  <div className="flex items-center space-x-2 border rounded-lg p-4">
-                    <RadioGroupItem value="standard" id="standard" />
-                    <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Standard Delivery</div>
-                      <div className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Clock className="h-4 w-4 mr-1" />
-                        30-45 minutes
-                      </div>
-                    </Label>
-                    <span className="font-medium">${deliveryOption === "standard" ? "2.99" : "5.99"}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 border rounded-lg p-4">
-                    <RadioGroupItem value="express" id="express" />
-                    <Label htmlFor="express" className="flex-1 cursor-pointer">
-                      <div className="font-medium">Express Delivery</div>
-                      <div className="text-sm text-muted-foreground flex items-center mt-1">
-                        <Clock className="h-4 w-4 mr-1" />
-                        15-25 minutes
-                      </div>
-                    </Label>
-                    <span className="font-medium">${deliveryOption === "express" ? "5.99" : "2.99"}</span>
-                  </div>
-                </RadioGroup>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    value={deliveryAddress.city}
+                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, city: e.target.value }))}
+                    placeholder="Enter your city"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    value={deliveryAddress.state}
+                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, state: e.target.value }))}
+                    placeholder="Enter your state"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
+              <div>
                 <Label htmlFor="instructions">Delivery Instructions (Optional)</Label>
                 <Textarea
                   id="instructions"
-                  placeholder="Any special instructions for delivery?"
-                  value={deliveryInstructions}
-                  onChange={(e) => setDeliveryInstructions(e.target.value)}
+                  value={deliveryAddress.instructions}
+                  onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, instructions: e.target.value }))}
+                  placeholder="Any special delivery instructions..."
+                  rows={3}
                 />
               </div>
             </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button onClick={handleNextStep}>
-                Continue to Order Summary
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
           </Card>
-        )}
 
-        {step === 2 && (
+          {/* Special Instructions */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-              <CardDescription>Review your order before payment</CardDescription>
+              <CardTitle>Special Instructions</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center">
-                    <div>
+            <CardContent>
+              <Textarea
+                value={specialInstructions}
+                onChange={(e) => setSpecialInstructions(e.target.value)}
+                placeholder="Any special requests for your order..."
+                rows={3}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Payment Method */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <CreditCard className="h-5 w-5 mr-2" />
+                Payment Method
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">BANK</span>
+                  </div>
+                  <div>
+                    <p className="font-medium">Bank Transfer</p>
+                    <p className="text-sm text-gray-600">Pay via bank transfer to complete your order</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column - Order Summary */}
+        <div>
+          <Card className="sticky top-4">
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Order Items */}
+              <div className="space-y-3">
+                {items.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="flex justify-between items-start">
+                    <div className="flex-1">
                       <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                      <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                      {item.customizations && Object.keys(item.customizations).length > 0 && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {Object.entries(item.customizations).map(([key, value]) => (
+                            <span key={key} className="block">
+                              {key}: {Array.isArray(value) ? value.join(", ") : String(value)}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">₦{(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 ))}
               </div>
 
               <Separator />
 
+              {/* Pricing Breakdown */}
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>Subtotal</span>
+                  <span>₦{subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Delivery Fee</span>
-                  <span>${deliveryFee.toFixed(2)}</span>
+                  <span>Delivery Fee</span>
+                  <span>₦{deliveryFee.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service Fee</span>
-                  <span>${serviceFee.toFixed(2)}</span>
+                  <span>Service Fee</span>
+                  <span>₦{serviceFee.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax (7.5%)</span>
+                  <span>₦{tax.toLocaleString()}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span>₦{total.toLocaleString()}</span>
                 </div>
               </div>
 
-              <Separator />
-
-              <div className="flex justify-between font-medium text-lg">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+              {/* Estimated Delivery Time */}
+              <div className="bg-orange-50 p-3 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium text-orange-800">Estimated delivery: 30-45 minutes</span>
+                </div>
               </div>
 
-              <div className="bg-muted p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Delivery Details</h3>
-                <p className="text-sm">{address}</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {deliveryOption === "standard" ? "Standard Delivery (30-45 min)" : "Express Delivery (15-25 min)"}
-                </p>
-                {deliveryInstructions && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium">Instructions:</p>
-                    <p className="text-sm text-muted-foreground">{deliveryInstructions}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={handlePreviousStep}>
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back
+              {/* Place Order Button */}
+              <Button
+                className="w-full bg-orange-500 hover:bg-orange-600"
+                size="lg"
+                onClick={handleCreateOrder}
+                disabled={isProcessing}
+              >
+                {isProcessing ? "Creating Order..." : `Place Order - ₦${total.toLocaleString()}`}
               </Button>
-              <Button onClick={handleNextStep}>
-                Continue to Payment
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-
-        {step === 3 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Payment
-              </CardTitle>
-              <CardDescription>Complete your order by making a payment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <PaymentMethodSelector
-                amount={totalInNaira}
-                email="customer@example.com" // In a real app, this would come from the user's profile
-                onSuccess={handlePaymentSuccess}
-                onCancel={handlePaymentCancel}
-              />
             </CardContent>
-            {!paymentComplete && (
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={handlePreviousStep}>
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-              </CardFooter>
-            )}
           </Card>
-        )}
+        </div>
       </div>
     </div>
   )

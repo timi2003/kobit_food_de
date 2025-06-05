@@ -24,12 +24,12 @@ export function AboutPage() {
       image: "/placeholder.svg?height=300&width=300",
       bio: "Emmanuel leads our tech team and is responsible for our cutting-edge platform.",
     },
-    {
-      name: "Akinlua Kemi",
-      role: "Head of Partnerships",
-      image: "/kemi.jpg?height=300&width=300",
-      bio: "Kemi works with restaurants to bring the best food options to our customers.",
-    },
+    // {
+    //   name: "Akinlua Kemi",
+    //   role: "Head of Partnerships",
+    //   image: "/kemi.jpg?height=300&width=300",
+    //   bio: "Kemi works with restaurants to bring the best food options to our customers.",
+    // },
   ]
 
   return (
@@ -48,7 +48,7 @@ export function AboutPage() {
         <div className="relative z-10 container mx-auto px-4 py-24 md:py-32 lg:py-40 flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">About KOBIT</h1>
           <p className="text-xl text-white/90 max-w-2xl mb-8">
-            We're on a mission to make food delivery fast, reliable, and delicious across Nigeria.
+            We're on a mission to make food delivery fast, reliable, and delicious in Lasued and environs, spreading to the whole of lagos state.
           </p>
         </div>
       </section>
@@ -58,8 +58,8 @@ export function AboutPage() {
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight mb-4">Our Story</h2>
           <p className="text-lg text-muted-foreground">
-            KOBIT was founded in 2025 with a simple mission: to connect hungry customers with the best local restaurants
-            in Nigeria. What started as a small operation in Ijanikin Lagos and we hope to  grow into a nationwide business.
+            KOBIT was founded in 2025 with a simple mission: to connect hungry customers with their favourite local restaurants
+            in Lasued spreading across Lagos stste. We started as a small operation in Ijanikin Lagos and we hope to  grow into a nationwide business.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function AboutPage() {
               restaurants, KOBIT was born.
             </p>
             <p className="text-muted-foreground mb-4">
-              We started with just 6 restaurant partners in Ijanikin. Today, we work with over 20 restaurants across
+              We started with just 6 restaurant partners in Ijanikin. Today, we are looking forward to working with restaurants across
               Lagos, delivering several number of meals every day.
             </p>
             <p className="text-muted-foreground">
@@ -161,7 +161,7 @@ export function AboutPage() {
             <div>
               <h3 className="text-2xl font-bold mb-4">Serving Nigeria</h3>
               <p className="text-muted-foreground mb-6">
-                We currently operate in Lagos Nigeria, with plans to expand to more locations soon.
+                We currently operate in ijanikin Lagos Nigeria, with plans to expand to more locations soon.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -171,7 +171,7 @@ export function AboutPage() {
                     <p className="text-sm text-muted-foreground">Our headquarters and first location</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                {/* <div className="flex items-start gap-3">
                   <MapPin className="h-5 w-5 text-primary mt-0.5" />
                   <div>
                     <h4 className="font-medium">Abuja</h4>
@@ -191,7 +191,7 @@ export function AboutPage() {
                     <h4 className="font-medium">Ibadan</h4>
                     <p className="text-sm text-muted-foreground">Serving western Nigeria</p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@ export function AboutPage() {
       <section className="container mx-auto py-16 px-4 text-center">
         <h2 className="text-3xl font-bold tracking-tight mb-6">Ready to Experience KOBIT?</h2>
         <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Join thousands of satisfied customers who enjoy delicious meals delivered to their doorstep.
+          Join our satisfied customers who enjoy delicious meals delivered to their doorstep.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg" className="rounded-full px-8">

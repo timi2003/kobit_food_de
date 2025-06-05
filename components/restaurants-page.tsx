@@ -16,21 +16,21 @@ export function RestaurantsPage() {
 
   // Sample restaurant data - in a real app, this would come from an API
   const restaurants = [
-    {
-      id: 1,
-      name: "Winnyz",
-      slug: "pizza-palace",
-      image: "/Winnyz.png?height=200&width=400",
-      rating: 4.8,
-      reviewCount: 243,
-      cuisineType: "",
-      deliveryTime: "20-35 min",
-      deliveryFee: "N1500",
-      minOrder: "N4000",
-      featured: true,
-      tags: ["Popular", "Free Delivery"],
-      address: "Magbon Badagry",
-    },
+    // {
+    //   id: 1,
+    //   name: "Winnyz",
+    //   slug: "pizza-palace",
+    //   image: "/Winnyz.png?height=200&width=400",
+    //   rating: 4.8,
+    //   reviewCount: 243,
+    //   cuisineType: "",
+    //   deliveryTime: "20-35 min",
+    //   deliveryFee: "N1500",
+    //   minOrder: "N4000",
+    //   featured: true,
+    //   tags: ["Popular", "Free Delivery"],
+    //   address: "Magbon Badagry",
+    // },
     {
       id: 2,
       name: "Iya-Oge Buka",
@@ -63,8 +63,8 @@ export function RestaurantsPage() {
     },
     {
       id: 4,
-      name: "Sushi Express",
-      slug: "sushi-express",
+      name: "Iya Blessing",
+      slug: "staple food",
       image: "/placeholder.svg?height=200&width=400",
       rating: 4.9,
       reviewCount: 312,
@@ -93,17 +93,17 @@ export function RestaurantsPage() {
     },
     {
       id: 6,
-      name: "Sweet Treats",
-      slug: "sweet-treats",
+      name: "Dele Foods",
+      slug: "sweet-treats and fries",
       image: "/placeholder.svg?height=200&width=400",
       rating: 4.7,
       reviewCount: 203,
-      cuisineType: "Desserts",
+      cuisineType: "Stir-fry",
       deliveryTime: "20-35 min",
       deliveryFee: "N800",
       minOrder: "N3000",
       featured: false,
-      tags: ["Desserts"],
+      tags: ["Stir-fry"],
       address: "Ijanikin Lagos",
     },
     {
@@ -113,12 +113,12 @@ export function RestaurantsPage() {
       image: "/Noodle-house.png?height=200&width=400",
       rating: 4.6,
       reviewCount: 167,
-      cuisineType: "",
+      cuisineType: "Exclusive",
       deliveryTime: "20-30 min",
       deliveryFee: "N1000",
       minOrder: "N2000",
       featured: false,
-      tags: ["Asian Fusion"],
+      tags: ["Noodles"],
       address: "Ijanikin Lagos",
     },
   ]
@@ -129,7 +129,7 @@ export function RestaurantsPage() {
     "minimart",
     "local-food",
     "Pasteries",
-    "Desserts",
+    "Stir-fry",
   ]
 
   // Filter restaurants based on search query

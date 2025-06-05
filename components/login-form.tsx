@@ -23,22 +23,38 @@ export function LoginForm() {
     setShowPassword(!showPassword)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
 
-    // In a real app, you would make an API call to authenticate the user
-    // For now, we'll simulate a successful login after a short delay
-    setTimeout(() => {
-      setIsLoading(false)
-      // Store login state in localStorage
-      localStorage.setItem("kobit-user", JSON.stringify({ email }))
-      // Redirect to home page
-      router.push("/")
-      // Refresh the page to update the UI
-      window.location.reload()
-    }, 1500)
-  }
+  //   // In a real app, you would make an API call to authenticate the user
+  //   // For now, we'll simulate a successful login after a short delay
+  //   setTimeout(() => {
+  //     setIsLoading(false)
+  //     // Store login state in localStorage
+  //     localStorage.setItem("kobit-user", JSON.stringify({ email }))
+  //     // Redirect to home page
+  //     router.push("/")
+  //     // Refresh the page to update the UI
+  //     window.location.reload()
+  //   }, 1500)
+  // }
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+      console.log('Login successful:', data);
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

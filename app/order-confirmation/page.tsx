@@ -43,7 +43,7 @@ export default function OrderConfirmation() {
                 <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
                   <h3 className="font-medium">Delivery Address</h3>
-                  <p className="text-muted-foreground">123 Main Street, Apt 4B, New York, NY 10001</p>
+                  <p className="text-muted-foreground">......</p>
                 </div>
               </div>
 
@@ -51,7 +51,7 @@ export default function OrderConfirmation() {
                 <Receipt className="h-5 w-5 text-muted-foreground mt-0.5" />
                 <div>
                   <h3 className="font-medium">Payment</h3>
-                  <p className="text-muted-foreground">Paid with Paystack</p>
+                  <p className="text-muted-foreground"></p>
                 </div>
               </div>
             </CardContent>
@@ -61,7 +61,7 @@ export default function OrderConfirmation() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>2 × Margherita Pizza</span>
-                    <span>$25.98</span>
+                    <span>25.98</span>
                   </div>
                   <div className="flex justify-between">
                     <span>1 × Double Cheeseburger</span>

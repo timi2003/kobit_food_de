@@ -23,64 +23,63 @@ export function OffersPage() {
     setTimeout(() => setCopiedCode(null), 3000)
   }
 
-  const featuredOffers = [
-    {
-      id: 1,
-      title: "20% Off Your First Order",
-      description: "New users get 30% off their first order up to N1000",
-      code: "WELCOME50",
-      expiryDate: "May 31, 2025",
-      image: "/placeholder.svg?height=200&width=400",
-      backgroundColor: "bg-gradient-to-r from-orange-500 to-red-500",
-    },
-    {
-      id: 2,
-      title: "Free Delivery Weekend",
-      description: "Enjoy free delivery on first two orders this weekend",
-      code: "FREEWEEKEND",
-      expiryDate: "May 19, 2025",
-      image: "/placeholder.svg?height=200&width=400",
-      backgroundColor: "bg-gradient-to-r from-blue-500 to-purple-500",
-    },
-  ]
+  // const featuredOffers = [
+  //   {
+  //     id: 1,
+  //     title: "20% Off Your First Order",
+  //     description: "New users get 30% off their first order up to N1000",
+  //     code: "WELCOME50",
+  //     expiryDate: "May 31, 2025",
+  //     image: "/placeholder.svg?height=200&width=400",
+  //     backgroundColor: "bg-gradient-to-r from-orange-500 to-red-500",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Free Delivery Weekend",
+  //     description: "Enjoy free delivery on first two orders this weekend",
+  //     code: "FREEWEEKEND",
+  //     expiryDate: "May 19, 2025",
+  //     image: "/placeholder.svg?height=200&width=400",
+  //     backgroundColor: "bg-gradient-to-r from-blue-500 to-purple-500",
+  //   },
+  // ]
 
   const promoOffers = [
     {
       id: 3,
-      title: "Buy One Get 20% discount",
+      title: "Order and get 20% discount",
       description: "Buy any main dish and get 20% discount on products",
-      code: "BOGOFREE",
-      expiryDate: "June 15, 2025",
-      restaurants: ["Burger Joint", "Pizza Palace"],
-      discount: "BOGO",
-      minOrder: "N7000",
+      // code: "BOGOFREE",
+      // expiryDate: "June 15, 2025",
+      restaurants: [""],
+      discount: "20%",
+      minOrder: "N10000",
     },
     {
       id: 4,
-      title: "15% Off Desserts",
-      description: "Get 15% off all desserts with any main dish purchase",
-      code: "SWEET30",
-      expiryDate: "May 25, 2025",
-      restaurants: ["Sweet Treats", "Cake Corner"],
+      title: "10% Off Stir Fry",
+      description: "Get 10% off Stir purchase",
+      // code: "SWEET30",
+      // expiryDate: "May 25, 2025",
+      restaurants: [""],
       discount: "15%",
       minOrder: "N5000",
     },
-    {
-      id: 5,
-      title: "N500 Off Orders Over N3000",
-      description: "Save N500 on your next order over N3000",
-      code: "SAVE5",
-      expiryDate: "June 30, 2025",
-      restaurants: ["All Restaurants"],
-      discount: "N500",
-      minOrder: "N3000",
-    },
+    // {
+    //   id: 5,
+    //   title: "N500 Off Orders Over N3000",
+    //   description: "Save N500 on your next order over N3000",
+    //   code: "SAVE5",
+    //   expiryDate: "June 30, 2025",
+    //   restaurants: ["All Restaurants"],
+    //   discount: "N500",
+    //   minOrder: "N3000",
+    // },
     {
       id: 6,
       title: "10% Off for Students",
-      description: "Students get 15% off all orders with valid ID",
+      description: "Students get 10% off all orders with valid ID",
       code: "STUDENT15",
-      expiryDate: "December 31, 2025",
       restaurants: ["All Restaurants"],
       discount: "10%",
       minOrder: "None",
@@ -90,31 +89,31 @@ export function OffersPage() {
   const restaurantDeals = [
     {
       id: 7,
-      restaurant: "Pizza Palace",
-      title: "Family Meal Deal",
-      description: "1 Large Pizza, 4 Sides, and 2 Desserts for N20000",
+      restaurant: "Dele Foods",
+      title: "Cliques Meal Deal",
+      description: "Fried rice, Stir fry, Turkey for N20000",
       image: "/placeholder.svg?height=150&width=300",
-      expiryDate: "June 30, 2025",
+      // expiryDate: "June 30, 2025",
     },
-    {
-      id: 8,
-      restaurant: "Burger Joint",
-      title: "Burger Combo Special",
-      description: "Any burger, fries, and drink for N4500",
-      image: "/bugcomb.jpeg?height=150&width=300",
-      expiryDate: "May 31, 2025",
-    },
+    // {
+    //   id: 8,
+    //   restaurant: "Burger Joint",
+    //   title: "Burger Combo Special",
+    //   description: "Any burger, fries, and drink for N4500",
+    //   image: "/bugcomb.jpeg?height=150&width=300",
+    //   expiryDate: "May 31, 2025",
+    // },
     {
       id: 9,
-      restaurant: "Winnyz",
-      title: "Buffet",
-      description: "Buffet for as low as N40000",
+      restaurant: "Iya-blessing Buka",
+      title: "Stockup Food for weekend",
+      description: "Buffet for as low as N30000",
       image: "/buffet.jpeg?height=150&width=300",
-      expiryDate: "June 15, 2025",
+      // expiryDate: "June 15, 2025",
     },
     {
       id: 10,
-      restaurant: "Iya-Oge Buka",
+      restaurant: "Iya-Blessing Buka",
       title: "Family Meal",
       description: "Get 15% discount",
       image: "/family-meal.jpeg?height=150&width=300",
@@ -133,7 +132,7 @@ export function OffersPage() {
 
       <div className="space-y-12">
         {/* Featured Offers */}
-        <section>
+        {/* <section>
           <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Offers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredOffers.map((offer) => (
@@ -177,7 +176,7 @@ export function OffersPage() {
               </Card>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* Promo Codes */}
         <section>
@@ -206,7 +205,7 @@ export function OffersPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => copyToClipboard(promo.code)}
+                          // onClick={() => copyToClipboard(promo.code)}
                           className="h-8 w-8"
                         >
                           {copiedCode === promo.code ? (
@@ -219,7 +218,7 @@ export function OffersPage() {
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
-                      <span>Expires: {promo.expiryDate}</span>
+                      {/* <span>Expires: {promo.expiryDate}</span> */}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Percent className="h-4 w-4" />

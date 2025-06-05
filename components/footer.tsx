@@ -49,14 +49,9 @@ export function Footer() {
                   Offers & Deals
                 </Link>
               </li>
-              <li>
-                <Link href="/gift-cards" className="text-muted-foreground hover:text-primary">
-                  Gift Cards
-                </Link>
-              </li>
             </ul>
           </div>
-          <div>
+          {/* <div>
             <h4 className="font-semibold text-lg mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
@@ -80,7 +75,7 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> 
           <div>
             <h4 className="font-semibold text-lg mb-4">Legal</h4>
             <ul className="space-y-2">
@@ -100,7 +95,7 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div>*/}
         </div>
         <div className="border-t mt-12 pt-8 text-center text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} KOBIT Food Delivery. All rights reserved.</p>

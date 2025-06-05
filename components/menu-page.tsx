@@ -18,7 +18,7 @@ import { AddToCartButton } from "@/components/add-to-cart-button"
 export function MenuPage() {
   const [priceRange, setPriceRange] = useState([0, 50])
 
-  const categories = ["All", "Burgers", "Swallow-Food", "Staple-Food", "Sandwiches", "Desserts", "Drinks"]
+  const categories = ["All", "Burgers", "Swallow-Food", "Rice dish", "Beans dish", "Stir fry", "Drinks"]
 
   const menuItems = [
     {
@@ -41,9 +41,9 @@ export function MenuPage() {
       image: "/Jollof-rice.png?height=300&width=300",
       rating: 4.7,
       deliveryTime: "15-25 min",
-      restaurant: "Winnyz",
+      restaurant: "Iya-blessing Buka",
       tags: ["Bestseller"],
-      category: "Staple-Foods",
+      category: "Rice dish",
     },
     {
       id: 3,
@@ -53,9 +53,9 @@ export function MenuPage() {
       image: "/Yamarita.jpg?height=300&width=300",
       rating: 4.5,
       deliveryTime: "15-20 min",
-      restaurant: "Winnyz",
+      restaurant: "Iya blessing Buka",
       tags: ["Healthy"],
-      category: "Staple-Foods",
+      category: "Swallow-Food",
     },
     {
       id: 4,
@@ -67,7 +67,7 @@ export function MenuPage() {
       deliveryTime: "25-35 min",
       restaurant: "Iya-Oge Buka",
       tags: ["Popular"],
-      category: "Staple-Food",
+      category: "Beans dish",
     },
     {
       id: 5,
@@ -77,21 +77,21 @@ export function MenuPage() {
       image: "/Fried-rice.jpg?height=300&width=300",
       rating: 4.6,
       deliveryTime: "20-35 min",
-      restaurant: "Winnyz",
+      restaurant: "Dele Foods",
       tags: ["Bestseller"],
-      category: "Staple-Food",
+      category: "Rice dish",
     },
     {
       id: 6,
-      name: "Spicy Chicken Sandwich",
-      description: "shreded chicken with spicy sauce",
+      name: "Stir Fry",
+      description: "Stir fry and Turkey",
       price: 700,
-      image: "/sandw.jpeg?height=300&width=300",
+      image: "/?height=300&width=300",
       rating: 4.7,
       deliveryTime: "15-25 min",
-      restaurant: "Favourite Hub",
+      restaurant: "Dele Foods",
       tags: ["Spicy", "Bestseller"],
-      category: "Sandwiches",
+      category: "Stir fry",
     },
     {
       id: 7,
@@ -108,7 +108,7 @@ export function MenuPage() {
     {
       id: 8,
       name: "Burger",
-      description: "chicken, ketchup, BBQ sauce",
+      description: "Not available now",
       price: 3000,
       image: "/burger.jpeg?height=300&width=300",
       rating: 4.9,
@@ -125,9 +125,9 @@ export function MenuPage() {
       image: "/Moi-Moi.jpg?height=300&width=300",
       rating: 4.9,
       deliveryTime: "20-30 min",
-      restaurant: "Iya-Oge",
+      restaurant: "Iya-moimoi Hub",
       tags: ["Bestseller"],
-      category: "Staple-Food",
+      category: "Beans dish",
     },
   ]
 
@@ -136,7 +136,7 @@ export function MenuPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Menu</h1>
-          <p className="text-muted-foreground">Discover delicious food from our partners</p>
+          <p className="text-muted-foreground">Discover delicious food from your favourite food vendor</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <div className="relative w-full sm:w-[250px]">
@@ -184,35 +184,18 @@ export function MenuPage() {
               </SheetHeader>
               <div className="py-6 space-y-6">
                 <div className="space-y-4">
-                  <h3 className="font-medium">Dietary Preferences</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="vegetarian" />
-                      <Label htmlFor="vegetarian">Vegetarian</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="vegan" />
-                      <Label htmlFor="vegan">Vegan</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="gluten-free" />
-                      <Label htmlFor="gluten-free">Gluten Free</Label>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="font-medium">Price Range</h3>
                     <div className="text-sm text-muted-foreground">
                       N{priceRange[0]} - N{priceRange[1]}
                     </div>
                   </div>
-                  <Slider defaultValue={[0, 50]} max={50} step={1} value={priceRange} onValueChange={setPriceRange} />
+                  <Slider defaultValue={[0, 4000]} max={4000} step={1} value={priceRange} onValueChange={setPriceRange} />
                 </div>
                 <div className="space-y-4">
                   <h3 className="font-medium">Ratings</h3>
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
+                    {/* <div className="flex items-center space-x-2">
                       <Checkbox id="rating-4.5" />
                       <Label htmlFor="rating-4.5" className="flex items-center">
                         4.5+ <Star className="h-3 w-3 ml-1 text-yellow-500" />
@@ -229,7 +212,7 @@ export function MenuPage() {
                       <Label htmlFor="rating-3.5" className="flex items-center">
                         3.5+ <Star className="h-3 w-3 ml-1 text-yellow-500" />
                       </Label>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="flex justify-end gap-2">
