@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, CreditCard, Clock } from "lucide-react"
+import { MapPin, CreditCard, Clock, Loader2 } from "lucide-react"
 import { useCart } from "@/context/cart-context"
 import { useAuth } from "@/context/auth-context"
 import { apiClient } from "@/lib/api-client"
@@ -39,11 +39,11 @@ interface OrderDetails {
 
 export function CheckoutPage() {
   const { items, getTotalPrice, clearCart } = useCart()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, loading: authLoading } = useAuth()
   const router = useRouter()
 
   const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
-    name: user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "",
+    name: "",
     street: "",
     city: "",
     state: "",
@@ -56,11 +56,37 @@ export function CheckoutPage() {
   const [orderCreated, setOrderCreated] = useState(false)
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null)
 
+  // Update delivery address when user data is available
+  useEffect(() => {
+    if (user) {
+      setDeliveryAddress((prev) => ({
+        ...prev,
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      }))
+    }
+  }, [user])
+
+  // Show loading while auth is being checked
+  if (authLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     router.push("/login?redirect=/checkout")
     return null
   }
 
+  // Show empty cart message
   if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -123,7 +149,7 @@ export function CheckoutPage() {
           total,
         },
         customer: {
-          id: user?.id,
+          id: user?._id || user?.id,
           email: user?.email,
           name: `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
         },
@@ -405,7 +431,14 @@ export function CheckoutPage() {
                 onClick={handleCreateOrder}
                 disabled={isProcessing}
               >
-                {isProcessing ? "Creating Order..." : `Place Order - ₦${total.toLocaleString()}`}
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating Order...
+                  </>
+                ) : (
+                  `Place Order - ₦${total.toLocaleString()}`
+                )}
               </Button>
             </CardContent>
           </Card>

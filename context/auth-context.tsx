@@ -6,6 +6,7 @@ import { apiClient } from "@/lib/api-client"
 
 interface User {
   _id: string
+  id: string
   email: string
   firstName: string
   lastName: string
@@ -31,36 +32,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check for existing token on mount
     const token = localStorage.getItem("accessToken")
-    if (token) {
-      apiClient.setToken(token)
-      // Verify token and get user data
-      fetchUserProfile()
-    } else {
-      setLoading(false)
-    }
-  }, [])
+    const savedUser = localStorage.getItem("user")
 
-  const fetchUserProfile = async () => {
-    try {
-      // Use the apiClient.getProfile() method instead of direct request
-      const response = await apiClient.getProfile()
-      setUser(response.data.user)
-    } catch (error) {
-      console.error("Failed to fetch user profile:", error)
-      logout()
-    } finally {
-      setLoading(false)
+    if (token && savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser)
+        setUser(parsedUser)
+        apiClient.setToken(token)
+      } catch (error) {
+        console.error("Failed to parse saved user:", error)
+        // Clear invalid data
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("user")
+      }
     }
-  }
+
+    setLoading(false)
+  }, [])
 
   const login = async (email: string, password: string) => {
     try {
       const response = await apiClient.login({ email, password })
 
-      if (response.success && response.data) {
-        apiClient.setToken(response.data.tokens.accessToken)
-        localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
-        setUser(response.data.user)
+      if (response.success) {
+        // Handle different response structures
+        const tokens = response.data?.tokens || response.tokens
+        const userData = response.data?.user || response.user
+
+        if (tokens?.accessToken) {
+          apiClient.setToken(tokens.accessToken)
+
+          if (tokens.refreshToken) {
+            localStorage.setItem("refreshToken", tokens.refreshToken)
+          }
+        }
+
+        if (userData) {
+          setUser(userData)
+          localStorage.setItem("user", JSON.stringify(userData))
+        }
       } else {
         throw new Error(response.message || "Login failed")
       }
@@ -73,10 +83,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await apiClient.register(userData)
 
-      if (response.success && response.data) {
-        apiClient.setToken(response.data.tokens.accessToken)
-        localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
-        setUser(response.data.user)
+      if (response.success) {
+        // Handle different response structures
+        const tokens = response.data?.tokens || response.tokens
+        const user = response.data?.user || response.user
+
+        if (tokens?.accessToken) {
+          apiClient.setToken(tokens.accessToken)
+
+          if (tokens.refreshToken) {
+            localStorage.setItem("refreshToken", tokens.refreshToken)
+          }
+        }
+
+        if (user) {
+          setUser(user)
+          localStorage.setItem("user", JSON.stringify(user))
+        }
       } else {
         throw new Error(response.message || "Registration failed")
       }
@@ -86,8 +109,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = () => {
+    // Clear API client token
     apiClient.clearToken()
+
+    // Clear user state
     setUser(null)
+
+    // Clear any additional localStorage items
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user")
+      localStorage.removeItem("cart") // Optional: clear cart on logout
+    }
+
     // Redirect to login page
     window.location.href = "/login"
   }

@@ -52,34 +52,43 @@ export function SignupForm() {
         phoneNumber,
       })
 
+      console.log("Registration response:", response)
+
       if (response.success) {
-        // Store auth tokens using the API client methods
-        if (response.data.tokens.accessToken) {
-          apiClient.setToken(response.data.tokens.accessToken)
+        // Handle different response structures
+        const tokens = response.data?.tokens || response.tokens
+        const user = response.data?.user || response.user
+
+        if (tokens?.accessToken) {
+          apiClient.setToken(tokens.accessToken)
+
+          // Store refresh token if available
+          if (tokens.refreshToken) {
+            localStorage.setItem("refreshToken", tokens.refreshToken)
+          }
         }
 
-        // Store refresh token separately
-        if (response.data.tokens.refreshToken) {
-          localStorage.setItem("refreshToken", response.data.tokens.refreshToken)
+        // Store user data if available
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user))
         }
-
-        // Store user data
-        localStorage.setItem("user", JSON.stringify(response.data.user))
 
         toast({
-          title: "Account created",
-          description: "Welcome to KOBIT! Your account has been created successfully.",
+          title: "Account created successfully!",
+          description: "Welcome to KOBIT! Your account don ready.",
         })
 
-        router.push("/")
+        // Redirect to home or intended page
+        const redirectUrl = new URLSearchParams(window.location.search).get("redirect") || "/"
+        router.push(redirectUrl)
       } else {
-        throw new Error(response.message || "Registration failed")
+        throw new Error(response.message || response.error || "Registration failed")
       }
     } catch (error) {
       console.error("Registration failed:", error)
       toast({
         title: "Registration failed",
-        description: error instanceof Error ? error.message : "Failed to create account. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create account. Abeg try again.",
         variant: "destructive",
       })
     } finally {
