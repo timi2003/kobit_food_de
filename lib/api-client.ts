@@ -47,7 +47,7 @@ class ApiClient {
   private token: string | null = null
 
   constructor() {
-    // Default to port 5000 which is what your Express backend is likely using
+    // Make sure this matches your backend server URL
     this.baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
     if (typeof window !== "undefined") {
       this.token = localStorage.getItem("accessToken")
@@ -70,14 +70,16 @@ class ApiClient {
   }
 
   private async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    // The backend routes already include /api prefix, so we don't need to add it here
-    const url = `${this.baseURL}${endpoint}`
+    // Ensure endpoint starts with /api
+    const apiEndpoint = endpoint.startsWith("/api") ? endpoint : `/api${endpoint}`
+    const url = `${this.baseURL}${apiEndpoint}`
+
+    console.log(`🔄 API Request: ${options.method || "GET"} ${url}`)
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     }
 
-    // Add existing headers from options
     if (options.headers) {
       const existingHeaders = options.headers as Record<string, string>
       Object.assign(headers, existingHeaders)
@@ -95,11 +97,14 @@ class ApiClient {
     try {
       const response = await fetch(url, config)
 
+      console.log(`✅ API Response: ${response.status} ${response.statusText}`)
+
       if (!response.ok) {
         let errorMessage = "Request failed"
 
         try {
           const errorData = await response.json()
+          console.error("❌ API Error Response:", errorData)
           errorMessage = errorData.message || errorData.error || `HTTP ${response.status}: ${response.statusText}`
         } catch {
           errorMessage = `Network error: ${response.status} ${response.statusText}`
@@ -108,9 +113,24 @@ class ApiClient {
         throw new Error(errorMessage)
       }
 
-      return response.json()
+      const data = await response.json()
+      console.log("📦 API Response Data:", data)
+      return data
     } catch (error) {
-      console.error("API request failed:", error)
+      console.error("❌ API request failed:", error)
+      throw error
+    }
+  }
+
+  // Test connection
+  async testConnection() {
+    try {
+      const response = await fetch(`${this.baseURL}/api/health`)
+      const data = await response.json()
+      console.log("🏥 Health Check:", data)
+      return data
+    } catch (error) {
+      console.error("❌ Health check failed:", error)
       throw error
     }
   }
@@ -123,40 +143,40 @@ class ApiClient {
     lastName: string
     phoneNumber?: string
   }) {
-    return this.request<ApiResponse>("/api/auth/register", {
+    return this.request<ApiResponse>("/auth/register", {
       method: "POST",
       body: JSON.stringify(userData),
     })
   }
 
   async login(credentials: { email: string; password: string }) {
-    return this.request<ApiResponse>("/api/auth/login", {
+    return this.request<ApiResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
     })
   }
 
   async logout() {
-    return this.request<ApiResponse>("/api/auth/logout", { method: "POST" })
+    return this.request<ApiResponse>("/auth/logout", { method: "POST" })
   }
 
   async getProfile() {
-    return this.request<ApiResponse>("/api/auth/profile")
+    return this.request<ApiResponse>("/auth/profile")
   }
 
   // Restaurants
   async getRestaurants(params?: Record<string, string | number | boolean>) {
     const query = params ? `?${new URLSearchParams(params as Record<string, string>)}` : ""
-    return this.request<ApiResponse>(`/api/restaurants${query}`)
+    return this.request<ApiResponse>(`/restaurants${query}`)
   }
 
   async getRestaurant(slug: string) {
-    return this.request<ApiResponse>(`/api/restaurants/${slug}`)
+    return this.request<ApiResponse>(`/restaurants/${slug}`)
   }
 
   // Orders
   async createOrder(orderData: OrderData) {
-    return this.request<ApiResponse>("/api/orders", {
+    return this.request<ApiResponse>("/orders", {
       method: "POST",
       body: JSON.stringify(orderData),
     })
@@ -164,27 +184,26 @@ class ApiClient {
 
   async getOrders(params?: Record<string, string | number>) {
     const query = params ? `?${new URLSearchParams(params as Record<string, string>)}` : ""
-    return this.request<ApiResponse>(`/api/orders${query}`)
+    return this.request<ApiResponse>(`/orders${query}`)
   }
 
   async getOrder(id: string) {
-    return this.request<ApiResponse>(`/api/orders/${id}`)
+    return this.request<ApiResponse>(`/orders/${id}`)
   }
 
   async updateOrderStatus(orderId: string, status: string, note?: string) {
-    return this.request<ApiResponse>(`/api/orders/${orderId}/status`, {
+    return this.request<ApiResponse>(`/orders/${orderId}/status`, {
       method: "PATCH",
       body: JSON.stringify({ status, note }),
     })
   }
 
-  // Update order payment
   async updateOrderPayment(data: {
     orderId: string
     paymentReference: string
     status: string
   }) {
-    return this.request<ApiResponse>(`/api/orders/${data.orderId}/payment`, {
+    return this.request<ApiResponse>(`/orders/${data.orderId}/payment`, {
       method: "PATCH",
       body: JSON.stringify({
         paymentReference: data.paymentReference,
@@ -201,7 +220,7 @@ class ApiClient {
     reference: string
     bankAccount: string
   }) {
-    return this.request<ApiResponse>("/api/payments/bank-transfer", {
+    return this.request<ApiResponse>("/payments/bank-transfer", {
       method: "POST",
       body: JSON.stringify(paymentData),
     })
@@ -212,7 +231,7 @@ class ApiClient {
     adminId?: string
     adminName?: string
   }) {
-    return this.request<ApiResponse>("/api/payments/confirm", {
+    return this.request<ApiResponse>("/payments/confirm", {
       method: "POST",
       body: JSON.stringify(confirmationData),
     })
@@ -224,7 +243,7 @@ class ApiClient {
     lastName?: string
     phoneNumber?: string
   }) {
-    return this.request<ApiResponse>("/api/users/profile", {
+    return this.request<ApiResponse>("/users/profile", {
       method: "PUT",
       body: JSON.stringify(userData),
     })
@@ -242,7 +261,7 @@ class ApiClient {
     }
     isDefault?: boolean
   }) {
-    return this.request<ApiResponse>("/api/users/addresses", {
+    return this.request<ApiResponse>("/users/addresses", {
       method: "POST",
       body: JSON.stringify(addressData),
     })
