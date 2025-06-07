@@ -281,7 +281,7 @@ export function SettingsPage() {
                         Add Payment Method
                       </Button>
                     </div>
-                    <Card>
+                    {/* <Card>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-4">
@@ -304,8 +304,8 @@ export function SettingsPage() {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
-                    <Card>
+                    </Card> */}
+                    {/* <Card>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-4">
@@ -330,8 +330,8 @@ export function SettingsPage() {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
-                    <Card>
+                    </Card> */}
+                    {/* <Card>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-4">
@@ -356,7 +356,7 @@ export function SettingsPage() {
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
+                    </Card> */}
                     <Card>
                       <CardContent className="p-4">
                         <div className="flex justify-between items-center">
@@ -365,11 +365,11 @@ export function SettingsPage() {
                               <img src="/placeholder.svg?height=20&width=20" alt="Flutterwave" className="h-5 w-5" />
                             </div>
                             <div>
-                              <h4 className="font-medium">Flutterwave</h4>
+                              <h4 className="font-medium">Bank Transfer</h4>
                               <p className="text-sm text-muted-foreground">Card ending in 3456</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          {/* <div className="flex items-center gap-2">
                             <Button variant="ghost" size="sm">
                               Set as Default
                             </Button>
@@ -379,7 +379,7 @@ export function SettingsPage() {
                             <Button variant="ghost" size="sm">
                               Remove
                             </Button>
-                          </div>
+                          </div> */}
                         </div>
                       </CardContent>
                     </Card>
