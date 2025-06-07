@@ -21,6 +21,7 @@ interface DeliveryAddress {
   city: string
   state: string
   zipCode: string
+  contact: string
   instructions?: string
 }
 
@@ -31,7 +32,7 @@ interface OrderDetails {
     total: number
     subtotal: number
     deliveryFee: number
-    serviceFee: number
+    serviceFee: number34
     tax: number
   }
   status: string
@@ -48,6 +49,7 @@ export function CheckoutPage() {
     city: "",
     state: "",
     zipCode: "",
+    contact: "",
     instructions: "",
   })
 
@@ -267,18 +269,18 @@ export function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="zipCode">Zip Code</Label>
+                  <Label htmlFor="zipCode">contact</Label>
                   <Input
-                    id="zipCode"
-                    value={deliveryAddress.zipCode}
-                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, zipCode: e.target.value }))}
-                    placeholder="Enter zip code"
+                    id="contact"
+                    value={deliveryAddress.contact}
+                    onChange={(e) => setDeliveryAddress((prev) => ({ ...prev, contact: e.target.value }))}
+                    placeholder="Enter your contact"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="street">Street Address</Label>
+                <Label htmlFor="street">Location</Label>
                 <Input
                   id="street"
                   value={deliveryAddress.street}

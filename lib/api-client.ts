@@ -8,6 +8,7 @@ interface ApiResponse<T = any> {
     refreshToken: string
   }
   user?: any
+  order?: any
 }
 
 interface OrderData {
@@ -169,6 +170,93 @@ class ApiClient {
     console.log(`🎭 Returning mock data for: ${method} ${endpoint}`)
 
     // Mock responses for different endpoints
+    if (endpoint.includes("/orders") && method === "POST") {
+      const orderNumber = `ORD-${Date.now()}`
+      return {
+        success: true,
+        message: "Order created successfully",
+        data: {
+          order: {
+            _id: `mock-order-${Date.now()}`,
+            orderNumber,
+            status: "pending",
+            pricing: {
+              subtotal: 5000,
+              deliveryFee: 500,
+              serviceFee: 250,
+              tax: 375,
+              total: 6125,
+            },
+            customer: {
+              name: "John Doe",
+              email: "john@example.com",
+            },
+            deliveryAddress: {
+              name: "John Doe",
+              street: "123 Test Street",
+              city: "Lagos",
+              state: "Lagos State",
+              zipCode: "100001",
+            },
+            items: [
+              {
+                name: "Jollof Rice",
+                price: 2500,
+                quantity: 2,
+              },
+            ],
+            createdAt: new Date().toISOString(),
+          },
+        },
+      }
+    }
+
+    if (endpoint.includes("/restaurants") && method === "GET") {
+      return {
+        success: true,
+        data: {
+          restaurants: [
+            {
+              _id: "1",
+              name: "Mama Put Kitchen",
+              description: "Authentic Nigerian home-style cooking with the best jollof rice in Lagos",
+              image: "/placeholder.svg?height=200&width=300",
+              cuisine: "Nigerian",
+              rating: 4.8,
+              deliveryTime: "25-35 mins",
+              deliveryFee: 500,
+              minimumOrder: 2000,
+              isOpen: true,
+              address: {
+                street: "123 Allen Avenue",
+                city: "Ikeja",
+                state: "Lagos",
+              },
+              tags: ["Popular", "Fast Delivery"],
+            },
+            {
+              _id: "2",
+              name: "Jollof Palace",
+              description: "The home of the best jollof rice and grilled chicken in Nigeria",
+              image: "/placeholder.svg?height=200&width=300",
+              cuisine: "Nigerian",
+              rating: 4.6,
+              deliveryTime: "30-40 mins",
+              deliveryFee: 600,
+              minimumOrder: 1500,
+              isOpen: true,
+              address: {
+                street: "45 Victoria Island",
+                city: "Lagos Island",
+                state: "Lagos",
+              },
+              tags: ["Jollof Specialist"],
+            },
+          ],
+        },
+      }
+    }
+
     if (endpoint.includes("/auth/register") && method === "POST") {
       return {
         success: true,
