@@ -55,7 +55,7 @@ export function LoginForm() {
 
         toast({
           title: "Login successful",
-          description: "Welcome back! You don enter.",
+          description: "Welcome back!.",
         })
 
         // Redirect to home or intended page
