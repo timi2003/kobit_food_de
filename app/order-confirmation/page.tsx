@@ -19,8 +19,7 @@ export default function OrderConfirmation() {
             <div className="inline-flex items-center justify-center p-4 bg-green-100 rounded-full mb-6">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Order is confirmed!</h1>
-            <h2 className="text-3xl font-bold tracking-tight mb-2">Your payment is being confirmed!....</h2>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">Order Confirmed!</h1>
             <p className="text-muted-foreground">
               Thank you for your order. Your food is being prepared and will be on its way soon.
             </p>

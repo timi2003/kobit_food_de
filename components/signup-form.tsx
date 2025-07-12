@@ -88,7 +88,7 @@ export function SignupForm() {
       console.error("Registration failed:", error)
       toast({
         title: "Registration failed",
-        description: error instanceof Error ? error.message : "Failed to create account. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create account. Abeg try again.",
         variant: "destructive",
       })
     } finally {

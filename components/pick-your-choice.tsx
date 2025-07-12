@@ -35,8 +35,6 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
     beans: [],
     drinks: [],
     moiMoi: [],
-    Swallow: [], // Added missing Swallow category
-    soup: [],
   })
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [openCategories, setOpenCategories] = useState<string[]>(["rice"])
@@ -156,11 +154,11 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
           description: "Fried sweet plantains 2pieces",
         },
         {
-          id: "turkey",
+          id: "Turkey",
           name: "Turkey",
           price: 2000,
           image: "/placeholder.svg?height=100&width=100",
-          description: "Grilled or fried turkey",
+          description: "Grilled or fried chicken",
         },
         {
           id: "beef",
@@ -184,7 +182,7 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
           description: "Nigerian style spaghetti with vegetables and spices with protein like egg",
         },
         {
-          id: "beans-rice",
+          id: "beans",
           name: "Beans",
           price: 300,
           image: "/placeholder.svg?height=100&width=100",
@@ -314,107 +312,6 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
         },
       ],
     },
-    {
-      id: "Swallow",
-      name: "Swallow Dishes",
-      allowMultiple: true,
-      maxSelections: 2,
-      items: [
-        {
-          id: "amala",
-          name: "Amala",
-          price: 400,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Wraps of amala",
-        },
-        {
-          id: "eba",
-          name: "Eba",
-          price: 100,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Wraps of eba",
-        },
-        {
-          id: "semo",
-          name: "Semo",
-          price: 300,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Wraps of semo",
-        },
-      ],
-    },
-     {
-      id: "Soup",
-      name: "Soup for swallow",
-      allowMultiple: true,
-      maxSelections: 2,
-      items: [
-        {
-          id: "Efo",
-          name: "Vegetable soup",
-          price: 400,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Vegeatble soup",
-        },
-        {
-          id: "Egusi",
-          name: "Egusi",
-          price: 100,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "egusi soup",
-        },
-        {
-          id: "Ewedu",
-          name: "Ewedu",
-          price: 300,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "ewedu soup",
-        },
-        {
-          id: "Okro",
-          name: "Okro",
-          price: 300,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "okro soup",
-        },
-      ],
-    },
-    {
-      id: "side dish",
-      name: "Side dish",
-      allowMultiple: true,
-      maxSelections: 4,
-      items: [
-        {
-          id: "turkey",
-          name: "Turkey",
-          price: 400,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Turkey",
-        },
-        {
-          id: "fish",
-          name: "Fish",
-          price: 100,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "Spicy fish",
-        },
-        {
-          id: "Ponmo",
-          name: "Ponmo",
-          price: 300,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "ponmo",
-        },
-        {
-          id: "Inu eran",
-          name: "Inu eran",
-          price: 300,
-          image: "/placeholder.svg?height=100&width=100",
-          description: "inu eran like roundabount, shaki etc",
-        },
-      ],
-    },
   ]
 
   const calculateTotal = () => {
@@ -452,25 +349,49 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
 
     setIsAddingToCart(true)
 
-    // Add each selected item to cart individually
+    // Create a custom meal name based on selected items
+    let mealName = "Custom Meal"
+    const firstCategory = Object.entries(selectedItems).find(([_, items]) => items.length > 0)
+    if (firstCategory) {
+      const categoryId = firstCategory[0]
+      const category = categories.find((c) => c.id === categoryId)
+      if (category) {
+        const firstItemId = firstCategory[1][0]
+        const firstItem = category.items.find((i) => i.id === firstItemId)
+        if (firstItem) {
+          mealName = `${firstItem.name} Combo`
+        }
+      }
+    }
+
+    // Get all selected items
+    const allSelectedItems: { id: string; name: string; price: number; quantity: number; image: string }[] = []
+
     Object.entries(selectedItems).forEach(([categoryId, itemIds]) => {
       itemIds.forEach((itemId) => {
         const category = categories.find((c) => c.id === categoryId)
         const item = category?.items.find((i) => i.id === itemId)
         if (item) {
-          const quantity = getItemQuantity(itemId)
-
-          // Add item to cart with proper quantity handling
-          for (let i = 0; i < quantity; i++) {
-            addItem({
-              id: item.id, // Keep as string to maintain consistency
-              name: item.name,
-              price: item.price,
-              image: item.image,
-              restaurant: "KOBIT Custom Meals",
-            })
-          }
+          allSelectedItems.push({
+            id: Number.parseInt(item.id, 10) || Math.floor(Math.random() * 10000),
+            name: item.name,
+            price: item.price,
+            quantity: getItemQuantity(itemId),
+            image: item.image,
+            restaurant: "KOBIT Custom Meals",
+          })
         }
+      })
+    })
+
+    // Add each item to cart
+    allSelectedItems.forEach((item) => {
+      addItem({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        restaurant: "KOBIT Custom Meals",
       })
     })
 
@@ -486,7 +407,6 @@ export function PickYourChoice({ isHomepage = false }: { isHomepage?: boolean })
       beans: [],
       drinks: [],
       moiMoi: [],
-      Swallow: [],
     })
     setQuantities({})
 

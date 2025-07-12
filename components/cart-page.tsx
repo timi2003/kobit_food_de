@@ -23,7 +23,7 @@ export function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Your Cart</h1>
-      <h2 className="text-3xl font-bold tracking-tight mb-8">Note: Delivery Time range from 9:00am - 11:00pm and 2:00pm - 5:00pm</h2>
+      <h2 className="text-3xl font-bold tracking-tight mb-8">Note: Delivery Time range from 9:00am - 5:00pm</h2>
 
       {items.length === 0 ? (
         <div className="text-center py-12">
