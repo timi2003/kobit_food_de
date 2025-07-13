@@ -60,33 +60,33 @@ export default function OrderConfirmation() {
                 <h3 className="font-medium mb-2">Order Summary</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span>2 × Margherita Pizza</span>
-                    <span>25.98</span>
+                    <span>2 × jollof-rice</span>
+                    <span>N2000</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>1 × Double Cheeseburger</span>
-                    <span>$9.99</span>
+                    <span>1 × plantain</span>
+                    <span>N200</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>1 × Chocolate Lava Cake</span>
-                    <span>$6.99</span>
+                    <span>1 × chicken</span>
+                    <span>N3000</span>
                   </div>
                   <div className="border-t pt-2 mt-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>$42.96</span>
+                      <span>N5200</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Delivery Fee</span>
-                      <span>$2.99</span>
+                      <span>N400</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Service Fee</span>
-                      <span>$1.99</span>
+                      <span>N100</span>
                     </div>
                     <div className="flex justify-between font-medium pt-2">
                       <span>Total</span>
-                      <span>$47.94</span>
+                      <span>N5700</span>
                     </div>
                   </div>
                 </div>
