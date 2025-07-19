@@ -36,3 +36,15 @@ export function AddToCartButton({
     </Button>
   )
 }
+
+
+/*what this code does is that it Accepts a product item with properties like id, name, price, etc.
+
+Accepts optional props for styling the button (variant, size, className).
+
+Uses a cart context hook (useCart) to access the addItem function.
+
+Renders a button labeled “Add to Cart” with a Plus icon.
+
+When clicked, it adds the item to the cart.
+*/
